@@ -13,6 +13,8 @@ def stats_for_dataset(dataset: str, prompt: str, client: str, prompt_key:str, ou
                       temperature=0.3, model=None, url=None):
 
     ds = load_from_disk(dataset) if is_local else load_dataset(dataset)
+    if "train" in ds:
+        ds = ds["train"]
     print(f"loaded dataset {dataset}")
     if client not in ["openai", "mistral"]:
         raise ValueError(f"Expected 'openai' or 'mistral', got {client}, which is currently unsupported")
