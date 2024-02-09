@@ -8,15 +8,17 @@ from grade_score import llm_judge_stats_comp, score_grading
 import prompts
 
 
-def extract_option_number(text):
-    # Search for 'Option' followed by a space and a number
-    match = re.search(r'Option (\d+)', text)
+def extract_option_number(text, sel_keyword="Selection"):
+    # Start off by finding the `Selection` section
 
-    # If a match is found, return the number, otherwise return None
-    if match:
-        return int(match.group(1)) - 1
-    else:
-        return None
+    sel_idx = text.find(sel_keyword)
+    if sel_idx >= 0:
+        # Search for 'Option' followed by a space and a number
+        match = re.search(r'Option (\d+)', text[sel_idx + len(sel_keyword):])
+
+        # If a match is found, return the number, otherwise return None
+        if match:
+            return int(match.group(1)) - 1
 
 
 class Evaluator:
