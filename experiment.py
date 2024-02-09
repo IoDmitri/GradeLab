@@ -1,6 +1,6 @@
 import argparse
 import json
-
+import os
 from client import client_from_args
 from llm_eval import Evaluator
 from prompts import judge_prompt, judge_prompt_v2, judge_prompt_v3
@@ -8,7 +8,7 @@ from prompts import judge_prompt, judge_prompt_v2, judge_prompt_v3
 from datasets import load_dataset, load_from_disk
 
 
-def stats_for_dataset(dataset: str, prompt: str, client: str, prompt_key:str, outputs_key: str, is_local=False,
+def stats_for_dataset(dataset: str, prompt_path: str, client: str, prompt_key:str, outputs_key: str, is_local=False,
                       llm_bias_threshold=0.4,choice_consistency_threshold=0.6, negative_sampling=False, api_key=None,
                       temperature=0.3, model=None, url=None):
 
@@ -21,18 +21,16 @@ def stats_for_dataset(dataset: str, prompt: str, client: str, prompt_key:str, ou
 
     client = client_from_args(client, api_key=api_key, model=model, url=url)
 
-    evaluator = Evaluator(client, prompt)
+    if not os.path.exists(prompt_path):
+        raise ValueError(f"provided prompt path: {prompt_path} was not found")
+
+    with open(prompt_path, "w") as f:
+        judge_prompt_to_use = f.read()
+
+    evaluator = Evaluator(client, judge_prompt_to_use)
     gen_args = {"temperature": temperature}
     if model:
         gen_args["model"] = model
-
-    judge_prompt_to_use = judge_prompt
-    if prompt in ["2", "prompt_2"]:
-        judge_prompt_to_use = judge_prompt_v2
-    elif prompt in ["3", "prompt_3"]:
-        judge_prompt_to_use = judge_prompt_v3
-    elif prompt:
-        judge_prompt_to_use = prompt
 
     return evaluator.grade_stats_for_dataset(
         ds, prompt_key, outputs_key, judge_prompt_to_use, negative_sample=negative_sampling,
