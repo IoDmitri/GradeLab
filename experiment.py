@@ -24,7 +24,7 @@ def stats_for_dataset(dataset: str, prompt_path: str, client: str, prompt_key:st
     if not os.path.exists(prompt_path):
         raise ValueError(f"provided prompt path: {prompt_path} was not found")
 
-    with open(prompt_path, "w") as f:
+    with open(prompt_path, "r") as f:
         judge_prompt_to_use = f.read()
 
     evaluator = Evaluator(client, judge_prompt_to_use)
