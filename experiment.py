@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    grade_score, llm_score, choice_score = stats_for_dataset(
+    grade_score = stats_for_dataset(
         args.dataset,
         args.prompt,
         args.client,
@@ -75,9 +75,9 @@ if __name__ == '__main__':
 
     save_dict = {
         "grade_score": grade_score,
-        "llm_score": llm_score,
-        "choice_score": choice_score
     }
 
     with open(args.save_path, "w") as f:
         json.dump(save_dict, f)
+
+    print(f"grade score: {grade_score}")
