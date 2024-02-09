@@ -4,7 +4,7 @@ import re
 from typing import Iterable
 
 from client import Client
-from grade_score import llm_judge_stats_comp, score_grading
+from grade_score import grade_score
 import prompts
 
 
@@ -81,10 +81,7 @@ class Evaluator:
             monte_carl_results = self.monte_carlo_evaluate(outputs, prompt, judge_prompt=judge_prompt,
                                                            **generate_args)
             row_stats.append(monte_carl_results)
-        llm_row_stats = [llm_judge_stats_comp(row) for row in row_stats]
-        return score_grading(llm_row_stats,
-                             llm_bias_threshold=llm_bias_threshold,
-                             choice_consistency_thereshold=choice_consistency_threshold
-                             )
+
+        return grade_score(row_stats)
 
 
