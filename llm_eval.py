@@ -13,12 +13,13 @@ def extract_option_number(text, sel_keyword="Selection"):
 
     sel_idx = text.find(sel_keyword)
     if sel_idx >= 0:
-        # Search for 'Option' followed by a space and a number
-        match = re.search(r'Option (\d+)', text[sel_idx + len(sel_keyword):])
+        text = text[sel_idx + len(sel_keyword):]
+    # Search for 'Option' followed by a space and a number
+    match = re.search(r'Option (\d+)', text)
 
-        # If a match is found, return the number, otherwise return None
-        if match:
-            return int(match.group(1)) - 1
+    # If a match is found, return the number, otherwise return None
+    if match:
+        return int(match.group(1)) - 1
 
 
 class Evaluator:
