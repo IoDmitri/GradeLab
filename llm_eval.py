@@ -22,6 +22,13 @@ def extract_option_number(text, sel_keyword="Selection"):
         return int(match.group(1)) - 1
 
 
+def unique_permutations(sq):
+    prev_sq = sq
+    for _ in range(len(sq)):
+        prev_sq = [prev_sq[-1]] + prev_sq[0:-1]
+        yield prev_sq
+
+
 class Evaluator:
     def __init__(self, client: Client, judge_prompt=None):
         self.client = client
@@ -42,24 +49,27 @@ class Evaluator:
         eval_output = self.client.get_completion(judge_prompt, eval_input, **generate_args)
         return extract_option_number(eval_output)
 
-    def _run_trial(self, outputs, instruction, judge_prompt, seed=124, **generate_args):
-        shuffled_with_indices = list(enumerate(outputs))
-        random.Random(seed).shuffle(shuffled_with_indices)
+    def _run_trial(self, outputs_with_idx, instruction, judge_prompt, **generate_args):
         # Extract shuffled list and the corresponding original indices
-        shuffled_list = [item[1] for item in shuffled_with_indices]
-        original_indices = [item[0] for item in shuffled_with_indices]
+        shuffled_list = [item[1] for item in outputs_with_idx]
+        original_indices = [item[0] for item in outputs_with_idx]
         # Run the evaluation function on the shuffled list
         selected_index = self.evaluate(shuffled_list, instruction, judge_prompt, **generate_args)
         true_winner_index = None
-        if selected_index is not None and selected_index < len(outputs):
+        if selected_index is not None and selected_index < len(outputs_with_idx):
             true_winner_index = original_indices[selected_index]
         return selected_index, true_winner_index
 
     def monte_carlo_evaluate(self, outputs, instruction, judge_prompt=None, **generate_args):
+        shuffled_with_indices = list(enumerate(outputs))
+
         with ThreadPoolExecutor() as executor:
             # Map run_trial function to each trial
-            results = list(executor.map(lambda idx: self._run_trial(outputs, instruction, judge_prompt,
-                                                                    idx, **generate_args), range(len(outputs))))
+            results = list(executor.map(lambda output_set: self._run_trial(output_set,
+                                                                           instruction,
+                                                                           judge_prompt,
+                                                                           **generate_args),
+                                        unique_permutations(shuffled_with_indices)))
 
             return results
 
