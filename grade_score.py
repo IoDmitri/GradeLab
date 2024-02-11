@@ -44,6 +44,7 @@ def llm_judge_grade_score(row):
         choice_score = compute_most_common_percentage(choice_sel)
 
         return llm_entropy * choice_score
+    return 0.0
 
 
 def grade_score(row_stats):
