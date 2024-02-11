@@ -54,11 +54,11 @@ class OpenAIClient(Client):
     def get_completion(self, system:str, message: str, **generate_args):
         messages = []
         if system:
-            messages.append({"role": "system", "content": message})
+            messages.append({"role": "system", "content": system})
         messages.append({"role": "user", "content": message})
         if "model" not in generate_args:
             generate_args["model"] = self.model
-
+        print(f"messages - {messages}")
         chat_response = self.client.chat.completions.create(
             messages=messages,
             **generate_args
