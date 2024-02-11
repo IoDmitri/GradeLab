@@ -58,7 +58,6 @@ class OpenAIClient(Client):
         messages.append({"role": "user", "content": message})
         if "model" not in generate_args:
             generate_args["model"] = self.model
-        print(f"messages - {messages}")
         chat_response = self.client.chat.completions.create(
             messages=messages,
             **generate_args
