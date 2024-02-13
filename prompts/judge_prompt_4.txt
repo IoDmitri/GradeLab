@@ -10,6 +10,3 @@ Response Format:
 Grading: Assign each Option a grade from [0, 5]. Assign the Option a 0 if it completly didn't follow the instruction and assign a 5 if the instruction was fully followed to the best possible conclusion.
 Selection: Respond with 'Option' followed by the number corresponding to your selection. Ensure that the selection is made purely on the criteria, irrespective of the option's position in the list.
 Explanation: Provide a detailed explanation for your choice. Highlight how the selected option best meets the criteria and stands out among the other options.
-Avoid Positional Bias: Do not let the position of an option (whether it's first, middle, or last) influence your judgment. Your focus should be solely on the content and quality of each option.
-
-By following these guidelines, ensure a balanced and impartial evaluation of the options presented.
