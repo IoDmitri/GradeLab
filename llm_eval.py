@@ -4,7 +4,7 @@ import re
 from typing import Iterable
 
 from client import Client
-from grade_score import grade_score
+from grade_score import llm_grade_stats
 import prompts
 
 
@@ -74,8 +74,7 @@ class Evaluator:
             return results
 
     def grade_stats_for_dataset(self, dataset: Iterable[dict], prompt_key, outputs_key, judge_prompt,
-                                negative_sample=False, llm_bias_threshold=0.4, choice_consistency_threshold=0.6,
-                                **generate_args):
+                                negative_sample=False, **generate_args):
 
         row_stats = []
         for row in dataset:
@@ -93,6 +92,6 @@ class Evaluator:
                                                            **generate_args)
             row_stats.append(monte_carl_results)
 
-        return grade_score(row_stats)
+        return llm_grade_stats(row_stats)
 
 

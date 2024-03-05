@@ -43,42 +43,48 @@ def llm_judge_grade_score(row):
         llm_entropy = compute_entropy(llm_sel, total_options)
         choice_score = compute_most_common_percentage(choice_sel)
 
-        return llm_entropy * choice_score
-    return 0.0
+        return (2 * (llm_entropy * choice_score)) / (llm_entropy + choice_score), \
+            llm_entropy, \
+            choice_score, \
+            llm_sel, \
+            choice_sel
+    return 0.0, 0.0, 0.0, [], []
 
 
-def grade_score(row_stats):
-    return np.mean([llm_judge_grade_score(row) for row in row_stats])
+def llm_grade_stats(row):
+    row_stats = [llm_judge_grade_score(r) for r in row]
+    mean_grade_score = np.mean([r_stats[0] for r_stats in row_stats])
+    mean_entropy = np.mean([r_stats[1] for r_stats in row_stats])
+    mean_choice_score = np.mean([r_stats[2] for r_stats in row_stats])
+
+    llm_sel_stats, llm_choice_stats = array_prob_stats([r_stats[3] for r_stats in row_stats],
+                                                       [r_stats[4] for r_stats in row_stats])
+
+    return mean_grade_score, mean_entropy, mean_choice_score, llm_sel_stats, llm_choice_stats
 
 
-def llm_judge_stats_comp(row):
-    usable_rows = [r for r in row if None not in r]
-    mode_stats = mode(usable_rows)
-    if not isinstance(mode_stats.count, np.ndarray):
-        return None
-    llm_mode = mode_stats.mode[0]
-    selected_mode = mode_stats.mode[1]
-    llm_idx_sel_pct = mode_stats.count[0] / len(usable_rows)
-    selected_idx_sel_pct = mode_stats.count[1] / len(usable_rows)
-    return llm_mode, selected_mode, llm_idx_sel_pct, selected_idx_sel_pct
+def array_prob_stats(selected_indices, original_positions):
+    if not selected_indices:
+        return []
+
+    # Flatten the lists using a list comprehension
+    flat_llm_select = np.array([item for sublist in selected_indices for item in sublist])
+    flat_choice_sel = np.array([item for sublist in original_positions for item in sublist])
+
+    # Determine the maximum index to account for all possible selections
+    max_index = max(flat_llm_select.max(), flat_choice_sel.max()) + 1
+
+    # Calculate probabilities for llm_select and choice_sel
+    prob_selected = _calculate_probabilities(flat_llm_select, max_index)
+    prob_original = _calculate_probabilities(flat_choice_sel, max_index)
+
+    return prob_selected, prob_original
 
 
-def score_grading(llm_stats, llm_bias_threshold=0.4, choice_consistency_thereshold=0.6):
-    llm_score = 0
-    choice_score = 0
+def _calculate_probabilities(flat_array, max_index):
+    counts = np.zeros(max_index)
+    for value in flat_array:
+        counts[value] += 1
+    probabilities = counts / len(flat_array)
+    return probabilities.tolist()
 
-    for stat in llm_stats:
-        if not stat:
-            continue
-        _, _, llm_sel_pctg, choice_sel_pctg = stat
-
-        if llm_sel_pctg <= llm_bias_threshold:
-            llm_score += 1
-
-        if choice_sel_pctg >= choice_consistency_thereshold:
-            choice_score += 1
-
-    llm_score = llm_score / len(llm_stats)
-    choice_score = choice_score / len(llm_stats)
-    grade_score = (2 * llm_score * choice_score) / (llm_score + choice_score)
-    return grade_score, llm_score, choice_score
