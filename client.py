@@ -4,6 +4,7 @@ from mistralai.client import MistralClient as _MistralClient
 from mistralai.models.chat_completion import ChatMessage
 
 from openai import OpenAI
+import anthropic
 
 from tenacity import (
     retry,
@@ -65,6 +66,29 @@ class OpenAIClient(Client):
         return chat_response.choices[0].message.content
 
 
+class AnthropicClient(Client):
+    def __init__(self, api_key, model=None):
+        super().__init__()
+        api_key = api_key or os.environ["ANTHROPIC_API_KEY"]
+        self.client = anthropic.Anthropic(api_key=api_key)
+        self.model = model or "claude-3-opus-20240229"
+
+    def get_completion(self, system: str, message: str, **generate_args):
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": message})
+
+        if "model" not in generate_args:
+            generate_args["model"] = self.model
+
+        response = self.client.messages.create(
+            messages=messages,
+            **generate_args
+        )
+        return response.content
+
+
 def client_from_args(client_str: str, **client_args):
     if client_str == "mistral":
         api_key = client_args.get("api_key")
@@ -73,6 +97,11 @@ def client_from_args(client_str: str, **client_args):
 
     elif client_str == "openai":
         return OpenAIClient(**client_args)
+
+    elif client_str == "anthropic":
+        api_key = client_args.get("api_key")
+        model = client_args.get("model")
+        return AnthropicClient(api_key=api_key, model=model)
 
     else:
         raise ValueError(f"supported choices are ['mistral', 'openai']. Got {client_str}")
