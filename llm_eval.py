@@ -10,7 +10,6 @@ import prompts
 
 def extract_option_number(text, sel_keyword="Selection"):
     # Start off by finding the `Selection` section
-
     sel_idx = text.find(sel_keyword)
     if sel_idx >= 0:
         text = text[sel_idx + len(sel_keyword):]

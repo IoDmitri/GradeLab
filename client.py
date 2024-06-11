@@ -51,11 +51,11 @@ class OpenAIClient(Client):
         self.model = model or "gpt-4"
 
     @retry(wait=wait_random_exponential(min=6, max=100), stop=stop_after_attempt(5))
-    def get_completion(self, system:str, message: str, **generate_args):
+    def get_completion(self, system: str, message: str, **generate_args):
         messages = []
         if system:
             messages.append({"role": "system", "content": system})
-        messages.append({"role": "user", "content": message})
+        messages.append({"role": "user", "content":  message})
         if "model" not in generate_args:
             generate_args["model"] = self.model
         chat_response = self.client.chat.completions.create(
