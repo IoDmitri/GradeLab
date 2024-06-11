@@ -16,8 +16,8 @@ def stats_for_dataset(dataset: str, prompt_path: str, client: str, prompt_key:st
         ds = ds["train"]
 
     print(f"loaded dataset {dataset}")
-    if client not in ["openai", "mistral", "anthropic"]:
-        raise ValueError(f"Expected 'openai' or 'mistral' or 'anthropic', got {client}, which is currently unsupported")
+    if client not in ["openai", "mistral", "anthropic", "together"]:
+        raise ValueError(f"Expected 'openai' or 'mistral' or 'anthropic' or 'together', got {client}, which is currently unsupported")
 
     client = client_from_args(client, api_key=api_key, model=model, url=url)
 
