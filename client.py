@@ -104,5 +104,5 @@ def client_from_args(client_str: str, **client_args):
         return AnthropicClient(api_key=api_key, model=model)
 
     else:
-        raise ValueError(f"supported choices are ['mistral', 'openai']. Got {client_str}")
+        raise ValueError(f"supported choices are ['mistral', 'openai', 'anthropic']. Got {client_str}")
 

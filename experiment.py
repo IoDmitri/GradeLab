@@ -16,8 +16,8 @@ def stats_for_dataset(dataset: str, prompt_path: str, client: str, prompt_key:st
         ds = ds["train"]
 
     print(f"loaded dataset {dataset}")
-    if client not in ["openai", "mistral"]:
-        raise ValueError(f"Expected 'openai' or 'mistral', got {client}, which is currently unsupported")
+    if client not in ["openai", "mistral", "anthropic"]:
+        raise ValueError(f"Expected 'openai' or 'mistral' or 'anthropic', got {client}, which is currently unsupported")
 
     client = client_from_args(client, api_key=api_key, model=model, url=url)
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluate dataset with LLMs.")
     parser.add_argument("dataset", type=str, help="Name of the dataset or path if local.")
     parser.add_argument("prompt", type=str, help="Prompt type or custom prompt.")
-    parser.add_argument("client", type=str, choices=["openai", "mistral"], help="Client to use: 'openai' or 'mistral'.")
+    parser.add_argument("client", type=str, choices=["openai", "mistral", "anthropic"], help="Client to use: 'openai' or 'mistral' or 'anthropic'.")
     parser.add_argument("prompt_key", type=str, help="Key for the prompt in the dataset.")
     parser.add_argument("outputs_key", type=str, help="Key for the outputs in the dataset.")
     parser.add_argument("--is_local", action="store_true", help="Flag to load dataset from disk.")
