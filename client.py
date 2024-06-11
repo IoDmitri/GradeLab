@@ -130,7 +130,9 @@ def client_from_args(client_str: str, **client_args):
         return AnthropicClient(api_key=api_key, model=model)
 
     elif client_str == "together":
-        return TogetherClient(**client_args)
+        api_key = client_args.get("api_key")
+        model = client_args.get("model")
+        return TogetherClient(api_key=api_key, model=model)
 
     else:
         raise ValueError(f"supported choices are ['mistral', 'openai', 'anthropic', 'together']. Got {client_str}")
