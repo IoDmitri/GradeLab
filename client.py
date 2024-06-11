@@ -75,18 +75,21 @@ class AnthropicClient(Client):
 
     def get_completion(self, system: str, message: str, **generate_args):
         messages = []
-        if system:
-            messages.append({"role": "system", "content": system})
         messages.append({"role": "user", "content": message})
 
-        if "model" not in generate_args:
-            generate_args["model"] = self.model
+        model = self.model
+        if "model" in generate_args:
+            model = generate_args["model"]
+
+        generate_args["model"] = model
 
         response = self.client.messages.create(
             messages=messages,
-            **generate_args
+            max_tokens=4096,
+            model = model,
+            system = system
         )
-        return response.content
+        return response.content[0].text
 
 
 def client_from_args(client_str: str, **client_args):
