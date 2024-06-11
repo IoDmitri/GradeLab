@@ -5,6 +5,7 @@ from mistralai.models.chat_completion import ChatMessage
 
 from openai import OpenAI
 import anthropic
+from together import Together
 
 from tenacity import (
     retry,
@@ -92,6 +93,28 @@ class AnthropicClient(Client):
         return response.content[0].text
 
 
+class TogetherClient(Client):
+    def __init__(self, api_key, model=None):
+        super().__init__()
+        api_key = api_key or os.environ["TOGETHER_API_KEY"]
+        self.client = Together(api_key=api_key)
+        self.model = model or "meta-llama/Llama-3-8b-chat-hf"
+
+    def get_completion(self, system: str, message: str, **generate_args):
+        messages = [{"role": "user", "content": message}]
+        if system:
+            messages.insert(0, {"role": "system", "content": system})
+
+        if "model" not in generate_args:
+            generate_args["model"] = self.model
+
+        response = self.client.chat.completions.create(
+            model=generate_args["model"],
+            messages=messages,
+        )
+        return response.choices[0].message.content
+
+
 def client_from_args(client_str: str, **client_args):
     if client_str == "mistral":
         api_key = client_args.get("api_key")
@@ -106,6 +129,9 @@ def client_from_args(client_str: str, **client_args):
         model = client_args.get("model")
         return AnthropicClient(api_key=api_key, model=model)
 
+    elif client_str == "together":
+        return TogetherClient(**client_args)
+
     else:
-        raise ValueError(f"supported choices are ['mistral', 'openai', 'anthropic']. Got {client_str}")
+        raise ValueError(f"supported choices are ['mistral', 'openai', 'anthropic', 'together']. Got {client_str}")
 
