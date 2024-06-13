@@ -74,6 +74,7 @@ class AnthropicClient(Client):
         self.client = anthropic.Anthropic(api_key=api_key)
         self.model = model or "claude-3-opus-20240229"
 
+    @retry(wait=wait_random_exponential(min=6, max=100), stop=stop_after_attempt(5))
     def get_completion(self, system: str, message: str, **generate_args):
         messages = []
         messages.append({"role": "user", "content": message})
@@ -100,6 +101,7 @@ class TogetherClient(Client):
         self.client = Together(api_key=api_key)
         self.model = model or "meta-llama/Llama-3-8b-chat-hf"
 
+    @retry(wait=wait_random_exponential(min=6, max=100), stop=stop_after_attempt(5))
     def get_completion(self, system: str, message: str, **generate_args):
         messages = [{"role": "user", "content": message}]
         if system:
