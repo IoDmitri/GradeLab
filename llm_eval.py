@@ -73,14 +73,14 @@ class Evaluator:
             return results
 
     def grade_stats_for_dataset(self, dataset: Iterable[dict], prompt_key, outputs_key, judge_prompt,
-                                negative_sample=False, **generate_args):
+                                random_option=False, **generate_args):
 
         row_stats = []
         for row in dataset:
             outputs = row[outputs_key]
             prompt = row[prompt_key]
 
-            if negative_sample:
+            if random_option:
                 sample = random.choice(dataset)
                 while sample[prompt_key] == prompt:
                     sample = random.choice(dataset)

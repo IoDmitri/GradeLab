@@ -9,7 +9,7 @@ from datasets import load_dataset, load_from_disk
 
 
 def stats_for_dataset(dataset: str, prompt_path: str, client: str, prompt_key:str, outputs_key: str, is_local=False,
-                      negative_sampling=False, api_key=None, temperature=0.3, model=None, url=None):
+                      random_option=False, api_key=None, temperature=0.3, model=None, url=None):
 
     ds = load_from_disk(dataset) if is_local else load_dataset(dataset)
     if "train" in ds:
@@ -33,7 +33,7 @@ def stats_for_dataset(dataset: str, prompt_path: str, client: str, prompt_key:st
         gen_args["model"] = model
 
     return evaluator.grade_stats_for_dataset(
-        ds, prompt_key, outputs_key, judge_prompt_to_use, negative_sample=negative_sampling, **gen_args)
+        ds, prompt_key, outputs_key, judge_prompt_to_use, random_option=random_option, **gen_args)
 
 
 if __name__ == '__main__':
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     parser.add_argument("prompt_key", type=str, help="Key for the prompt in the dataset.")
     parser.add_argument("outputs_key", type=str, help="Key for the outputs in the dataset.")
     parser.add_argument("--is_local", action="store_true", help="Flag to load dataset from disk.")
-    parser.add_argument("--negative_sampling", action="store_true", help="Flag for negative sampling.")
+    parser.add_argument("--random_option", action="store_true", help="Flag for using a random option.")
     parser.add_argument("--api_key", type=str, help="API key for the client.")
     parser.add_argument("--temperature", type=float, default=0.3, help="Temperature for generation.")
     parser.add_argument("--model", type=str, help="Model to be used for generation.")
@@ -60,7 +60,7 @@ if __name__ == '__main__':
         args.prompt_key,
         args.outputs_key,
         args.is_local,
-        args.negative_sampling,
+        args.random_option,
         args.api_key,
         args.temperature,
         args.model,
