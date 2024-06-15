@@ -4,3 +4,4 @@ numpy
 openai
 scipy
 tenacity
+together
