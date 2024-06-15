@@ -40,7 +40,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluate dataset with LLMs.")
     parser.add_argument("dataset", type=str, help="Name of the dataset or path if local.")
     parser.add_argument("prompt", type=str, help="Prompt type or custom prompt.")
-    parser.add_argument("client", type=str, choices=["openai", "mistral", "anthropic"], help="Client to use: 'openai' or 'mistral' or 'anthropic'.")
+    parser.add_argument("client", type=str, help="Client to use: 'openai', 'mistral', 'anthropic' or 'together'")
     parser.add_argument("prompt_key", type=str, help="Key for the prompt in the dataset.")
     parser.add_argument("outputs_key", type=str, help="Key for the outputs in the dataset.")
     parser.add_argument("--is_local", action="store_true", help="Flag to load dataset from disk.")
@@ -77,3 +77,8 @@ if __name__ == '__main__':
 
     with open(args.save_path, "w") as f:
         json.dump(save_dict, f)
+        print(f"Saved results to {args.save_path}")
+    
+    print(f"results: {save_dict}")
+    
+    
