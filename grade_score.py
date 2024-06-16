@@ -53,9 +53,9 @@ def llm_judge_grade_score(row):
 
 def llm_grade_stats(row):
     row_stats = [llm_judge_grade_score(r) for r in row]
-    mean_grade_score = np.mean([r_stats[0] for r_stats in row_stats])
-    mean_entropy = np.mean([r_stats[1] for r_stats in row_stats])
-    mean_choice_score = np.mean([r_stats[2] for r_stats in row_stats])
+    mean_grade_score = np.nanmean([r_stats[0] for r_stats in row_stats])
+    mean_entropy = np.nanmean([r_stats[1] for r_stats in row_stats])
+    mean_choice_score = np.nanmean([r_stats[2] for r_stats in row_stats])
 
     llm_sel_stats, llm_choice_stats = array_prob_stats([r_stats[3] for r_stats in row_stats],
                                                        [r_stats[4] for r_stats in row_stats])
