@@ -44,7 +44,7 @@ dmitri@Dmitris-MacBook-Pro-2 GradeLab %
 
 Example Usage
 ```
-python experiment.py IoDmitri/OAST-sample \  
+python experiment.py IoDmitri/OAST-full \  
 prompts\judge_prompt_3.txt\  
  openai \   
  prompt \   
