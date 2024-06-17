@@ -3,7 +3,6 @@ import json
 import os
 from client import client_from_args
 from llm_eval import Evaluator
-from prompts import judge_prompt, judge_prompt_v2, judge_prompt_v3
 
 from datasets import load_dataset, load_from_disk
 
