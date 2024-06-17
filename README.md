@@ -50,6 +50,6 @@ prompts\judge_prompt_3.txt\
  prompt \   
  outputs \    
  --api_key 1234  \  
- --save_path llama_7b_prompt3.json\   
+ --save_path gpt_4_prompt3.json\   
  --random_option
 ```
