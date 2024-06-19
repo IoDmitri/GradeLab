@@ -1,4 +1,4 @@
-The following is GradeLab, a package based on the paper: [insert paper link here]
+The following is GradeLab, a package based on the paper: [GradeLab: Evaluating the Capabilities of Large Language Models in Multiple-Choice Questions](https://arxiv.org/abs/2406.12043)
 
 ## Intro
 GradeLab is a package for evaluating the capabilities of LLMs when they're deciding on multiple choice options. The Score is based on the following formula: 
